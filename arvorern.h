@@ -19,6 +19,20 @@ typedef struct arvore_rn {
     NO *raiz;
 } arvore_rn;
 
-cor_t corNO(NO *node);
+// Retorna a cor do nó
+cor_t corNO(NO *node); 
 
-bool trocaCor(NO *node);
+// Dado um nó, realiza a mudança de cor.
+// Caso seja Preto altera para vermelho,
+// caso seja vermelho altera para preto
+bool trocaCor(NO *node); 
+
+// Aloca um novo nó a ser inserido
+NO* criarNo(item_t dados, NO* pai);
+
+// Realiza a inserção do nó
+NO* inserir(NO *raiz, item_t chave);
+
+void balancearArvore(arvore_rn *arvore);
+
+void adicionarNo(arvore_rn *arvore, item_t chave);
