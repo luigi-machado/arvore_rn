@@ -20,7 +20,7 @@ typedef struct arvore_rn {
 } arvore_rn;
 
 // Retorna a cor do nó
-cor_t corNO(NO *node); 
+cor_t corDoNO(NO *node); 
 
 // Dado um nó, realiza a mudança de cor.
 // Caso seja Preto altera para vermelho,
