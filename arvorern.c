@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "arvorern.h"
 
-cor_t corNO(NO *node) {
+cor_t corDoNO(NO *node) {
     if (node == NULL)
         return PRETO;
     return node->cor;
