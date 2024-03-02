@@ -1,7 +1,5 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <stdint.h>
 
 typedef enum {VERMELHO, PRETO} cor_t;
 
@@ -20,7 +18,7 @@ typedef struct arvore_rn {
 } arvore_rn;
 
 // Retorna a cor do nó
-cor_t corNO(NO *node); 
+cor_t corDoNO(NO *node); 
 
 // Dado um nó, realiza a mudança de cor.
 // Caso seja Preto altera para vermelho,
@@ -30,8 +28,12 @@ bool trocaCor(NO *node);
 // Aloca um novo nó a ser inserido
 NO* criarNo(item_t dados, NO* pai);
 
+void inicializar(arvore_rn *arvore);
+
 // Realiza a inserção do nó
-NO* inserir(NO *raiz, item_t chave);
+static NO* inserir_base(NO *raiz, item_t chave);
+
+void inserir(arvore_rn *arvore, item_t chave);
 
 void balancearArvore(arvore_rn *arvore);
 
