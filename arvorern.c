@@ -34,9 +34,20 @@ NO* criarNo(item_t dados, NO *pai) {
     return novoNo;
 }
 
+
+NO* sucessorImediato(NO* node) {
+    NO *aux = node->direita;
+    while (aux->esquerda != NULL) {
+         aux = aux->esquerda;
+    }
+    return aux;
+}
+
+
 void inicializar(arvore_rn *arvore) {
     arvore->raiz = NULL;
 }
+
 
 static NO* inserir_base(NO* raiz, item_t chave) {
     if (raiz == NULL)
@@ -57,7 +68,6 @@ void balancearArvore(arvore_rn *arvore) {
 
 
 void inserir(arvore_rn *arvore, item_t chave) {
-
     if (arvore->raiz == NULL)
         arvore->raiz = inserir_base(arvore->raiz, chave);
     else
@@ -66,11 +76,6 @@ void inserir(arvore_rn *arvore, item_t chave) {
     balancearArvore(arvore);
 }
 
-
-void adicionarNo(arvore_rn *arvore, item_t chave) {
-    inserir(arvore, chave);
-    balancearArvore(arvore);
-}
 
 void inorder(NO *raiz) {
     if (raiz != NULL) {

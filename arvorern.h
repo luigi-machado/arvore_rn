@@ -28,6 +28,8 @@ bool trocaCor(NO *node);
 // Aloca um novo nó a ser inserido
 NO* criarNo(item_t dados, NO* pai);
 
+NO* sucessorImediato(NO* node);
+
 void inicializar(arvore_rn *arvore);
 
 // Realiza a inserção do nó
@@ -36,5 +38,3 @@ static NO* inserir_base(NO *raiz, item_t chave);
 void inserir(arvore_rn *arvore, item_t chave);
 
 void balancearArvore(arvore_rn *arvore);
-
-void adicionarNo(arvore_rn *arvore, item_t chave);
