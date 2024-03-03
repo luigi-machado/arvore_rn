@@ -49,16 +49,49 @@ void inicializar(arvore_rn *arvore) {
 }
 
 
-static NO* inserir_bin(NO* raiz, item_t chave) {
+static NO* old_inserir_bin(NO* raiz, item_t chave) {
     if (raiz == NULL)
         return criarNo(chave, NULL);
     if (chave > raiz->dados) {
-        raiz->direita = inserir_bin(raiz->direita, chave);
+        raiz->direita = old_inserir_bin(raiz->direita, chave);
     }
     else if (chave < raiz->dados) {
-        raiz->esquerda = inserir_bin(raiz->esquerda, chave);
+        raiz->esquerda = old_inserir_bin(raiz->esquerda, chave);
     }
     return raiz;
+}
+
+
+static bool inserir_bin(arvore_rn *arvore, item_t chave) {
+    NO* novoNo = criarNo(chave, NULL);
+    NO* atual = arvore->raiz;
+    NO* pai = NULL;
+    
+    // Encontra a posição de inserção do nó 
+    while (atual != NULL) {
+        pai = atual;
+        if (atual->dados == chave) // Se o nó atual tiver chave igual a de inserção
+            return false;          // O nó não será inserido e a função retorna false
+        else if (chave > atual->dados)
+            atual = atual->direita;
+        else if (chave < atual->dados)
+            atual = atual->esquerda;
+    }
+    
+    if (pai == NULL) { // Se o pai for NULL o nó deve ser inserido na raiz
+        arvore->raiz = novoNo;
+        return true;
+    } else if (chave > pai->dados) {
+        pai->direita = novoNo;
+        novoNo->pai = pai;
+        return true;
+    } else if (chave < pai->dados) {
+        pai->esquerda = novoNo;
+        novoNo->pai = pai;
+        return true;
+    }
+    
+    return false;
 }
 
 
@@ -68,11 +101,7 @@ void balancearArvore(arvore_rn *arvore) {
 
 
 void inserir(arvore_rn *arvore, item_t chave) {
-    if (arvore->raiz == NULL)
-        arvore->raiz = inserir_bin(arvore->raiz, chave);
-    else
-        inserir_bin(arvore->raiz, chave);
-
+    inserir_bin(arvore, chave);
     balancearArvore(arvore);
 }
 

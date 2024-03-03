@@ -35,8 +35,12 @@ NO* sucessorImediato(NO* node);
 
 void inicializar(arvore_rn *arvore);
 
+// Inserção padrão de arvore binária de busca;
+// FUNÇÃO ANTIGA
+static NO* old_inserir_bin(NO *raiz, item_t chave);
+
 // Inserção padrão de arvore binária de busca
-static NO* inserir_bin(NO *raiz, item_t chave);
+static bool inserir_bin(arvore_rn *arvore, item_t chave);
 
 void inserir(arvore_rn *arvore, item_t chave);
 
