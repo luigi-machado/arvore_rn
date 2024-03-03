@@ -46,15 +46,17 @@ static NO* old_inserir_bin(NO *raiz, item_t chave);
 // Inserção padrão de arvore binária de busca
 static bool inserir_bin(arvore_rn *arvore, item_t chave);
 
-void inserir(arvore_rn *arvore, item_t chave);
+bool inserir(arvore_rn *arvore, item_t chave);
 
 static void trocarChave(NO* atual, NO* novo);
 
 // Remoção padrao de arvore binaria de busca
 bool remover_bin(arvore_rn *arvore, item_t chave);
 
-void remover(arvore_rn *arvore, item_t chave);
+bool remover(arvore_rn *arvore, item_t chave);
 
 void balancearArvore(arvore_rn *arvore);
+
+void inorder(NO* raiz);
 
 #endif // ARVORE_RN 

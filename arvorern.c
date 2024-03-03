@@ -121,9 +121,12 @@ void balancearArvore(arvore_rn *arvore) {
 }
 
 
-void inserir(arvore_rn *arvore, item_t chave) {
-    inserir_bin(arvore, chave);
-    balancearArvore(arvore);
+bool inserir(arvore_rn *arvore, item_t chave) {
+    if (inserir_bin(arvore, chave)) {
+        balancearArvore(arvore);
+        return true;
+    }
+    return false;
 }
 
 
@@ -175,6 +178,15 @@ bool remover_bin(arvore_rn *arvore, item_t chave) {
         return true; 
 
     } 
+    return false;
+}
+
+
+bool remover(arvore_rn *arvore, item_t chave) {
+    if (remover_bin(arvore, chave)) {
+        balancearArvore(arvore);
+        return true;
+    }
     return false;
 }
 
