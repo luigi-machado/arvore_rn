@@ -49,6 +49,20 @@ void inicializar(arvore_rn *arvore) {
 }
 
 
+NO* encontrarNO(arvore_rn *arvore, item_t chave) {
+    NO *atual = arvore->raiz;
+    while (atual != NULL) {
+        if (atual->dados == chave)
+            return atual;
+        else if (chave > atual->dados)
+            atual = atual->direita;
+        else if (chave < atual->dados)
+            atual = atual->esquerda;
+    }
+    return atual;
+}
+
+
 static NO* old_inserir_bin(NO* raiz, item_t chave) {
     if (raiz == NULL)
         return criarNo(chave, NULL);
@@ -103,6 +117,18 @@ void balancearArvore(arvore_rn *arvore) {
 void inserir(arvore_rn *arvore, item_t chave) {
     inserir_bin(arvore, chave);
     balancearArvore(arvore);
+}
+
+
+void trocarChave(NO *atual, NO *novo) {
+    atual->dados = novo->dados;
+}
+
+
+bool remover_bin(arvore_rn *arvore, item_t chave) {
+    NO* atual = encontrarNO(arvore, chave);
+    if (atual == NULL) // Retorna false se a chave não for encontrada
+        return false;
 }
 
 
