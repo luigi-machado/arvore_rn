@@ -31,6 +31,8 @@ bool trocaCor(NO *node);
 // Aloca um novo nó a ser inserido
 NO* criarNo(item_t dados, NO* pai);
 
+static bool ehFolha(NO* node);
+
 NO* sucessorImediato(NO* node);
 
 void inicializar(arvore_rn *arvore);
@@ -46,8 +48,9 @@ static bool inserir_bin(arvore_rn *arvore, item_t chave);
 
 void inserir(arvore_rn *arvore, item_t chave);
 
-void trocarChave(NO* atual, NO* novo);
+static void trocarChave(NO* atual, NO* novo);
 
+// Remoção padrao de arvore binaria de busca
 bool remover_bin(arvore_rn *arvore, item_t chave);
 
 void remover(arvore_rn *arvore, item_t chave);

@@ -35,6 +35,11 @@ NO* criarNo(item_t dados, NO *pai) {
 }
 
 
+bool ehFolha(NO *node) {
+    return (node->direita == NULL && node->esquerda == NULL);
+}
+
+
 NO* sucessorImediato(NO* node) {
     NO *aux = node->direita;
     while (aux->esquerda != NULL) {
@@ -98,10 +103,12 @@ static bool inserir_bin(arvore_rn *arvore, item_t chave) {
     } else if (chave > pai->dados) {
         pai->direita = novoNo;
         novoNo->pai = pai;
+        //printf("pai: %d\n", novoNo->pai->dados);
         return true;
     } else if (chave < pai->dados) {
         pai->esquerda = novoNo;
         novoNo->pai = pai;
+        //printf("pai: %d\n", novoNo->pai->dados);
         return true;
     }
     
@@ -120,15 +127,55 @@ void inserir(arvore_rn *arvore, item_t chave) {
 }
 
 
-void trocarChave(NO *atual, NO *novo) {
+static void trocarChave(NO *atual, NO *novo) {
+    //printf("chave: %d\n ", atual->dados);
     atual->dados = novo->dados;
+    //printf("nova chave: %d\n ", atual->dados);
 }
 
 
 bool remover_bin(arvore_rn *arvore, item_t chave) {
     NO* atual = encontrarNO(arvore, chave);
+    NO* pai = atual->pai;
     if (atual == NULL) // Retorna false se a chave não for encontrada
         return false;
+
+    if (ehFolha(atual)) {
+        if (pai == NULL) 
+            arvore->raiz = NULL;
+        else if (atual->dados > pai->dados)
+            pai->direita = NULL;
+        else
+            pai->esquerda = NULL;
+        
+        free(atual);
+        return true;
+
+    } else if (atual->direita != NULL){
+        NO* sucessor = sucessorImediato(atual);
+        // Se o sucessor nao é uma folha basta apenas reajustar 
+        // o ponteiro do pai após fazer a troca de chave
+        if (!ehFolha(sucessor)) 
+            sucessor->pai->direita = sucessor->direita; // Nunca terá um filho esquerdo
+        else { 
+            if (sucessor->dados > sucessor->pai->dados) {
+                sucessor->pai->direita = NULL;
+            } else {
+                sucessor->pai->esquerda = NULL;
+            }
+        }
+        trocarChave(atual, sucessor);
+        free(sucessor);
+        return true;
+
+    } else if (atual->esquerda != NULL){
+        trocarChave(atual, atual->esquerda);
+        atual->direita = atual->esquerda->direita;
+        atual->esquerda = atual->esquerda->esquerda;
+        return true; 
+
+    } 
+    return false;
 }
 
 
