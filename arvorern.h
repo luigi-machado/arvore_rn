@@ -35,8 +35,8 @@ NO* sucessorImediato(NO* node);
 
 void inicializar(arvore_rn *arvore);
 
-// Realiza a inserção do nó
-static NO* inserir_base(NO *raiz, item_t chave);
+// Inserção padrão de arvore binária de busca
+static NO* inserir_bin(NO *raiz, item_t chave);
 
 void inserir(arvore_rn *arvore, item_t chave);
 

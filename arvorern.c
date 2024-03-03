@@ -49,14 +49,14 @@ void inicializar(arvore_rn *arvore) {
 }
 
 
-static NO* inserir_base(NO* raiz, item_t chave) {
+static NO* inserir_bin(NO* raiz, item_t chave) {
     if (raiz == NULL)
         return criarNo(chave, NULL);
     if (chave > raiz->dados) {
-        raiz->direita = inserir_base(raiz->direita, chave);
+        raiz->direita = inserir_bin(raiz->direita, chave);
     }
     else if (chave < raiz->dados) {
-        raiz->esquerda = inserir_base(raiz->esquerda, chave);
+        raiz->esquerda = inserir_bin(raiz->esquerda, chave);
     }
     return raiz;
 }
@@ -69,9 +69,9 @@ void balancearArvore(arvore_rn *arvore) {
 
 void inserir(arvore_rn *arvore, item_t chave) {
     if (arvore->raiz == NULL)
-        arvore->raiz = inserir_base(arvore->raiz, chave);
+        arvore->raiz = inserir_bin(arvore->raiz, chave);
     else
-        inserir_base(arvore->raiz, chave);
+        inserir_bin(arvore->raiz, chave);
 
     balancearArvore(arvore);
 }
