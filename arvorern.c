@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
 #include "arvorern.h"
 
 cor_t corDoNO(NO *node) {
@@ -11,7 +12,10 @@ cor_t corDoNO(NO *node) {
 }
 
 
-bool trocaCor(NO *node) {
+// Dado um nó, realiza a mudança de cor dele e de seus filhos.
+// Caso seja Preto altera para vermelho,
+// caso seja vermelho altera para preto
+static bool trocaCor(NO *node) {
     if (node == NULL)
         return false;
     node->cor = !node->cor;
@@ -23,7 +27,8 @@ bool trocaCor(NO *node) {
 }
 
 
-NO* criarNo(item_t dados, NO *pai) {
+// Aloca um novo nó a ser inserido
+static NO* criarNo(item_t dados, NO *pai) {
     NO *novoNo = malloc(sizeof(NO));
     novoNo->cor = VERMELHO;
     novoNo->dados = dados;
@@ -37,6 +42,20 @@ NO* criarNo(item_t dados, NO *pai) {
 
 bool ehFolha(NO *node) {
     return (node->direita == NULL && node->esquerda == NULL);
+}
+
+
+static bool ehFilhoDireito(NO *node) {
+    if (node == node->pai->direita)
+        return true;
+    return false;
+}
+
+
+static bool ehFilhoEsquerdo(NO *node) {
+    if (node == node->pai->esquerda)
+        return true;
+    return false;
 }
 
 
@@ -67,6 +86,56 @@ NO* encontrarNO(arvore_rn *arvore, item_t chave) {
     return atual;
 }
 
+// Retorna um apontador para o tio do nó 
+NO* encontraTio(NO* node) {
+    NO* pai = node->pai;
+    if (pai == NULL)
+        return NULL;
+    NO* avo = pai->pai;
+    if (avo == NULL)
+        return NULL;
+    NO* tio = NULL;
+    if (pai->dados > avo->dados)
+        tio = avo->esquerda;
+    else
+        tio = avo->direita;
+    return tio;
+}
+
+
+static void rotacaoDireita(arvore_rn *arvore, NO *pivo) {
+    return;
+}
+
+
+static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
+    return;
+}
+
+
+static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
+    if (corDoNO(novoNO->pai) == PRETO) // Se o pai do novo nó for preto a arvore já está balanceada
+        return;
+
+    NO* pai = novoNO->pai;
+    NO* avo = pai->pai;
+    NO* tio = encontraTio(novoNO);
+
+    // Caso 1: o pai e o tio são vermelhos 
+    if (corDoNO(tio) == VERMELHO) {
+        trocaCor(avo);
+        balancearInsercao(arvore, avo);
+    } 
+
+    arvore->raiz->cor = PRETO;
+    return;
+}
+
+
+static void balancearRemocao(arvore_rn *arvore) {
+    return;
+}
+
 
 static NO* old_inserir_bin(NO* raiz, item_t chave) {
     if (raiz == NULL)
@@ -81,8 +150,12 @@ static NO* old_inserir_bin(NO* raiz, item_t chave) {
 }
 
 
-static bool inserir_bin(arvore_rn *arvore, item_t chave) {
+// Inserção padrão de arvore binária de busca 
+static bool inserir_abb(arvore_rn *arvore, item_t chave, NO** novoNO_ptr) {
     NO* novoNo = criarNo(chave, NULL);
+    *novoNO_ptr = novoNo;
+    if (novoNo == NULL)
+        return false;
     NO* atual = arvore->raiz;
     NO* pai = NULL;
     
@@ -103,12 +176,10 @@ static bool inserir_bin(arvore_rn *arvore, item_t chave) {
     } else if (chave > pai->dados) {
         pai->direita = novoNo;
         novoNo->pai = pai;
-        //printf("pai: %d\n", novoNo->pai->dados);
         return true;
     } else if (chave < pai->dados) {
         pai->esquerda = novoNo;
         novoNo->pai = pai;
-        //printf("pai: %d\n", novoNo->pai->dados);
         return true;
     }
     
@@ -116,28 +187,24 @@ static bool inserir_bin(arvore_rn *arvore, item_t chave) {
 }
 
 
-void balancearArvore(arvore_rn *arvore) {
-    return;
-}
-
-
 bool inserir(arvore_rn *arvore, item_t chave) {
-    if (inserir_bin(arvore, chave)) {
-        balancearArvore(arvore);
+    NO* novo;
+    if (inserir_abb(arvore, chave, &novo)) {
+        balancearInsercao(arvore, novo);
         return true;
     }
     return false;
 }
 
 
+// Muda o valor da chave de um nó para o valor de outro 
 static void trocarChave(NO *atual, NO *novo) {
-    //printf("chave: %d\n ", atual->dados);
     atual->dados = novo->dados;
-    //printf("nova chave: %d\n ", atual->dados);
 }
 
 
-bool remover_bin(arvore_rn *arvore, item_t chave) {
+// Remoção padrao de arvore binaria de busca
+static bool remover_abb(arvore_rn *arvore, item_t chave) {
     NO* atual = encontrarNO(arvore, chave);
     NO* pai = atual->pai;
     if (atual == NULL) // Retorna false se a chave não for encontrada
@@ -183,18 +250,25 @@ bool remover_bin(arvore_rn *arvore, item_t chave) {
 
 
 bool remover(arvore_rn *arvore, item_t chave) {
-    if (remover_bin(arvore, chave)) {
-        balancearArvore(arvore);
+    if (remover_abb(arvore, chave)) {
+        balancearRemocao(arvore);
         return true;
     }
     return false;
 }
 
 
-void inorder(NO *raiz) {
+// Realiza navegação inOrder, exibindo todos os elementos da arvore.
+// Função base para a inorder 
+static void inorder_base(NO *raiz) {
     if (raiz != NULL) {
-        inorder(raiz->esquerda);
+        inorder_base(raiz->esquerda);
         printf("%d ", raiz->dados);
-        inorder(raiz->direita);
+        inorder_base(raiz->direita);
     }
+}
+
+
+void inorder(arvore_rn *arvore) {
+    inorder_base(arvore->raiz);
 }

@@ -44,12 +44,20 @@ void inicializar(arvore_rn *arvore);
 // Caso não encontre retorna NULL
 NO* encontrarNO(arvore_rn *arvore, item_t chave);
 
+static void rotacaoDireita(arvore_rn *arvore, NO* pivo);
+
+static void rotacaoEsquerda(arvore_rn *arvore, NO* pivo);
+
+static void balancearInsercao(arvore_rn *arvore, NO* novoNO);
+
+static void balancearRemocao(arvore_rn *arvore);
+
 // Inserção padrão de arvore binária de busca;
 // FUNÇÃO ANTIGA
 static NO* old_inserir_bin(NO *raiz, item_t chave);
 
 // Inserção padrão de arvore binária de busca 
-static bool inserir_bin(arvore_rn *arvore, item_t chave, NO** novoNO_ptr);
+static bool inserir_abb(arvore_rn *arvore, item_t chave, NO** novoNO_ptr);
 
 // Insere o nó na arvore_rn e realiza o balanceamento.
 // Retorna false caso ocorra algum erro na inserção ou se o nó já estiver presente.
@@ -64,10 +72,6 @@ static bool remover_bin(arvore_rn *arvore, item_t chave);
 // Remove o nó da arvore_rn e realiza o balanceamento.
 // Retorna true caso remova e false se o nó não for encontrado
 bool remover(arvore_rn *arvore, item_t chave);
-
-void balancearInsercao(arvore_rn *arvore, NO* novoNO);
-
-void balancearRemocao(arvore_rn *arvore);
 
 // Realiza navegação inOrder, exibindo todos os elementos da arvore.
 // Função base para a inorder 
