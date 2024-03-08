@@ -125,6 +125,7 @@ static void rotacaoDireita(arvore_rn *arvore, NO *pivo) {
     pivo->pai = aux;
 }
 
+
 // Apenas Deus sabe como isso funciona direito
 static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
     NO *aux = pivo->direita;
