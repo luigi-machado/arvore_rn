@@ -103,17 +103,55 @@ NO* encontraTio(NO* node) {
 }
 
 
+// Deus por favor me explica o que ta acontecendo aqui
 static void rotacaoDireita(arvore_rn *arvore, NO *pivo) {
-    return;
+    NO *aux = pivo->esquerda;
+    pivo->esquerda = aux->direita;
+
+    // Atualiza o pai do filho direito do filho esquerdo do pivo
+    if (aux->direita != NULL)
+        aux->direita->pai = pivo;  // Filho direito do filho esquerdo do pivo passa a ser filho do pivo
+
+    aux->pai = pivo->pai;
+    // Se o pivo for raiz atualiza a raiz para seu filho esquerdo
+    if (pivo->pai == NULL)
+        arvore->raiz = aux;
+    else if (ehFilhoDireito(pivo))
+        pivo->pai->esquerda = aux;
+    else
+        pivo->pai->direita = aux;
+
+    aux->direita = pivo;
+    pivo->pai = aux;
 }
 
-
+// Apenas Deus sabe como isso funciona direito
 static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
-    return;
+    NO *aux = pivo->direita;
+    pivo->direita = aux->esquerda;
+
+    // Atualiza o pai do filho direito do filho esquerdo do pivo
+    if (aux->esquerda != NULL)
+        aux->esquerda->pai = pivo;  // Filho direito do filho esquerdo do pivo passa a ser filho do pivo
+
+    aux->pai = pivo->pai;
+    // Se o pivo for raiz atualiza a raiz para seu filho esquerdo
+    if (pivo->pai == NULL)
+        arvore->raiz = aux;
+    else if (ehFilhoEsquerdo(pivo))
+        pivo->pai->direita = aux;
+    else
+        pivo->pai->esquerda = aux;
+
+    aux->direita = pivo;
+    pivo->pai = aux;
+
 }
 
 
 static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
+    if (novoNO != arvore->raiz)
+        printf("nNo: %d | pai: %d\n", novoNO->dados, novoNO->pai->dados);
     if (corDoNO(novoNO->pai) == PRETO) // Se o pai do novo nó for preto a arvore já está balanceada
         return;
 
@@ -123,7 +161,7 @@ static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
 
     // Caso 1: o pai e o tio são vermelhos 
     if (corDoNO(tio) == VERMELHO) {
-        trocaCor(avo);
+        trocaCor(avo); // RECURSAO DEU MERDA
         balancearInsercao(arvore, avo);
     } 
 
@@ -271,4 +309,48 @@ static void inorder_base(NO *raiz) {
 
 void inorder(arvore_rn *arvore) {
     inorder_base(arvore->raiz);
+}
+
+
+static int altura(NO* node) {
+    if (node == NULL)
+        return 0;
+    
+    int altura_direita = altura(node->direita);
+    int altura_esquerda = altura(node->esquerda);
+
+    if (altura_direita > altura_esquerda)
+        return altura_direita + 1;
+    else
+        return altura_esquerda + 1;;
+}
+
+static void imprime_nivel(NO* raiz, int nivel) {
+    if (raiz == NULL)
+        return;
+    if (nivel == 1) {
+        printf("%d ", raiz->dados);
+        if (raiz->cor == VERMELHO)
+            printf("V | ");
+        else
+            printf("P | ");
+    }
+    else if (nivel > 1) {
+        imprime_nivel(raiz->esquerda, nivel - 1);
+        imprime_nivel(raiz->direita, nivel - 1);
+    }
+}
+
+void imprimePorNivel(arvore_rn *arvore) {
+    int h = altura(arvore->raiz);
+    for (int i = 1; i <= h; i++) {
+        /*int n = (h - i);
+        for (int j = 0; j < n; j++) {
+            printf(" ");
+        }*/
+        imprime_nivel(arvore->raiz, i);
+        printf("\n");
+    }
+    printf("\n");
+
 }

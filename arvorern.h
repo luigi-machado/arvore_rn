@@ -80,4 +80,6 @@ static void inorder_base(NO* raiz);
 // Realiza navegação inOrder, exibindo todos os elementos da arvore 
 void inorder(arvore_rn *arvore);
 
+void imprimePorNivel(arvore_rn *arvore);
+
 #endif // ARVORE_RN 
