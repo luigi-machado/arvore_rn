@@ -131,12 +131,12 @@ static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
     NO *aux = pivo->direita;
     pivo->direita = aux->esquerda;
 
-    // Atualiza o pai do filho direito do filho esquerdo do pivo
+    // Atualiza o pai do filho esquerdo do filho direito do pivo
     if (aux->esquerda != NULL)
-        aux->esquerda->pai = pivo;  // Filho direito do filho esquerdo do pivo passa a ser filho do pivo
+        aux->esquerda->pai = pivo;  // Filho esquerdo do filho direito do pivo passa a ser filho do pivo
 
     aux->pai = pivo->pai;
-    // Se o pivo for raiz atualiza a raiz para seu filho esquerdo
+    // Se o pivo for raiz atualiza a raiz para seu filho direito
     if (pivo->pai == NULL)
         arvore->raiz = aux;
     else if (ehFilhoEsquerdo(pivo))
