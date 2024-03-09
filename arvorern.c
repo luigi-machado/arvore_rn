@@ -290,52 +290,6 @@ static void trocarChave(NO *atual, NO *novo) {
 }
 
 
-// Remoção padrao de arvore binaria de busca
-static bool remover_abb(arvore_rn *arvore, item_t chave) {
-    NO* atual = encontrarNO(arvore, chave);
-    NO* pai = atual->pai;
-    if (atual == NULL) // Retorna false se a chave não for encontrada
-        return false;
-
-    if (ehFolha(atual)) {
-        if (pai == NULL) 
-            arvore->raiz = NULL;
-        else if (atual->dados > pai->dados)
-            pai->direita = NULL;
-        else
-            pai->esquerda = NULL;
-        
-        free(atual);
-        return true;
-
-    } else if (atual->direita != NULL){
-        NO* sucessor = sucessorImediato(atual);
-        // Se o sucessor nao é uma folha basta apenas reajustar 
-        // o ponteiro do pai após fazer a troca de chave
-        if (!ehFolha(sucessor)) 
-            sucessor->pai->direita = sucessor->direita; // Nunca terá um filho esquerdo
-        else { 
-            if (sucessor->dados > sucessor->pai->dados) {
-                sucessor->pai->direita = NULL;
-            } else {
-                sucessor->pai->esquerda = NULL;
-            }
-        }
-        trocarChave(atual, sucessor);
-        free(sucessor);
-        return true;
-
-    } else if (atual->esquerda != NULL){
-        trocarChave(atual, atual->esquerda);
-        atual->direita = atual->esquerda->direita;
-        atual->esquerda = atual->esquerda->esquerda;
-        return true; 
-
-    } 
-    return false;
-}
-
-
 // Funcao padrao de remocao da arvore binaria.
 static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto) {
     NO* atual = encontrarNO(arvore, chave);
