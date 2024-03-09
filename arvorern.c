@@ -335,6 +335,54 @@ static bool remover_abb(arvore_rn *arvore, item_t chave) {
     return false;
 }
 
+static bool remover_abb(arvore_rn *arvore, item_t chave, NO** removido_ptr) {
+    NO* atual = encontrarNO(arvore, chave);
+    *removido_ptr = atual; //EDITAR ESSA PORRA AQUI
+    NO* pai = atual->pai;
+    if (atual == NULL) // Retorna false se a chave não for encontrada
+        return false;
+
+    if (ehFolha(atual)) {
+        if (pai == NULL) 
+            arvore->raiz = NULL;
+        else if (atual->dados > pai->dados)
+            pai->direita = NULL;
+        else
+            pai->esquerda = NULL;
+        
+        free(atual);
+        return true;
+
+    } else if (atual->esquerda != NULL){
+        NO* pred = predecessorImediato(atual);
+        // Se o sucessor nao é uma folha basta apenas reajustar 
+        // o ponteiro do pai após fazer a troca de chave
+        if (!ehFolha(pred)) 
+            pred->pai->esquerda = pred->esquerda; // predecessor nunca terá um filho direito
+        else { 
+            if (ehFilhoDireito(pred)) { // Se for uma folha remove-se a referencia do filho correspondente
+                pred->pai->direita = NULL;
+            } else {
+                pred->pai->esquerda = NULL;
+            }
+        }
+        trocarChave(atual, pred);
+        free(pred);
+        return true;
+
+    } else if (atual->direita != NULL){
+        NO* aux = atual->direita;
+        trocarChave(atual, aux);
+        atual->direita = aux->direita;
+        atual->esquerda = aux->esquerda;
+        free(aux);
+        return true; 
+
+    } 
+    return false;
+}
+
+
 
 bool remover(arvore_rn *arvore, item_t chave) {
     if (remover_abb(arvore, chave)) {
