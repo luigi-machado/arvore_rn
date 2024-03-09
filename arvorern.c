@@ -138,7 +138,7 @@ static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
     else
         pivo->pai->direita = aux;
 
-    aux->direita = pivo;
+    aux->esquerda = pivo;
     pivo->pai = aux;
 }
 
