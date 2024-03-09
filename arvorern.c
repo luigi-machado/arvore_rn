@@ -337,10 +337,11 @@ static bool remover_abb(arvore_rn *arvore, item_t chave) {
 
 static bool remover_abb(arvore_rn *arvore, item_t chave, NO** removido_ptr) {
     NO* atual = encontrarNO(arvore, chave);
-    *removido_ptr = atual; //EDITAR ESSA PORRA AQUI
-    NO* pai = atual->pai;
     if (atual == NULL) // Retorna false se a chave não for encontrada
         return false;
+
+    *removido_ptr = atual; //EDITAR ESSA PORRA AQUI
+    NO* pai = atual->pai;
 
     if (ehFolha(atual)) {
         if (pai == NULL) 
