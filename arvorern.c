@@ -144,21 +144,60 @@ static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
 
 
 static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
-    if (novoNO != arvore->raiz)
-        printf("nNo: %d | pai: %d\n", novoNO->dados, novoNO->pai->dados);
-    if (corDoNO(novoNO->pai) == PRETO) // Se o pai do novo nó for preto a arvore já está balanceada
-        return;
+    // Se o pai do novo nó for preto a arvore já está balanceada
+    while (corDoNO(novoNO) == VERMELHO && /*novoNO->pai != NULL &&*/ corDoNO(novoNO->pai) == VERMELHO) {
+        printf("bal\n");
+        NO* pai = novoNO->pai;
+        NO* avo = pai->pai;
+        NO* tio = encontraTio(novoNO);
+        // Tio é filho direito
+        if (ehFilhoEsquerdo(pai)) {
+            printf("pai esq\n");
+            // Caso 1: o pai e o tio são vermelhos
+            if (corDoNO(tio) == VERMELHO) {
+                printf("simp\n");
+                avo->cor = VERMELHO; 
+                pai->cor = PRETO; // Muda a cor do avô e dos tios
+                tio->cor = PRETO;
+                novoNO = avo; // Segue a verificação subindo pelo avô
+            // Caso 2: o pai é Vermelho e o tio é Negro. Com o pai sendo filho esquerdo
+            } else {
+                if (ehFilhoDireito(novoNO)) { // Caso 2.  rotação dupla a Direita
+                    printf("rtd\n");
+                    rotacaoEsquerda(arvore, pai);
+                    novoNO = pai;
+                    pai = novoNO->pai; // Atualiza as referencias para o novo 'novoNo'
+                }
+                printf("rot dir\n");
+                rotacaoDireita(arvore, avo); // Se não entrou no if executa Rotação simples a direita
+                avo->cor = VERMELHO;
+                pai->cor = PRETO;
+                novoNO = pai;
+            }
 
-    NO* pai = novoNO->pai;
-    NO* avo = pai->pai;
-    NO* tio = encontraTio(novoNO);
-
-    // Caso 1: o pai e o tio são vermelhos 
-    if (corDoNO(tio) == VERMELHO) {
-        trocaCor(avo); // RECURSAO DEU MERDA
-        balancearInsercao(arvore, avo);
-    } 
-
+        } else {
+            printf("pai dir\n");
+            if (corDoNO(tio) == VERMELHO) {
+                printf("simp\n");
+                avo->cor = VERMELHO; 
+                pai->cor = PRETO; // Muda a cor do avô e dos tios
+                tio->cor = PRETO;
+                novoNO = avo;
+            } else {
+                if (ehFilhoEsquerdo(novoNO)) {
+                    rotacaoDireita(arvore, pai);
+                    novoNO = pai;
+                    pai = novoNO->pai; // atualiza as referencias para o novo 'novoNo'
+                }
+                printf("rot esq\n");
+                rotacaoEsquerda(arvore, avo);
+                avo->cor = VERMELHO;
+                pai->cor = PRETO;
+                novoNO = pai;
+            }
+        }
+    
+    }
     arvore->raiz->cor = PRETO;
     return;
 }
