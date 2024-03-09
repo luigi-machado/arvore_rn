@@ -335,12 +335,13 @@ static bool remover_abb(arvore_rn *arvore, item_t chave) {
     return false;
 }
 
-static bool remover_abb(arvore_rn *arvore, item_t chave, NO** removido_ptr) {
+
+// Funcao padrao de remocao da arvore binaria.
+static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto) {
     NO* atual = encontrarNO(arvore, chave);
     if (atual == NULL) // Retorna false se a chave não for encontrada
         return false;
 
-    *removido_ptr = atual; //EDITAR ESSA PORRA AQUI
     NO* pai = atual->pai;
 
     if (ehFolha(atual)) {
@@ -352,11 +353,12 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** removido_ptr) {
             pai->esquerda = NULL;
         
         free(atual);
+        *substituto = NULL; 
         return true;
 
     } else if (atual->esquerda != NULL){
         NO* pred = predecessorImediato(atual);
-        // Se o sucessor nao é uma folha basta apenas reajustar 
+        // Se o predecessor nao é uma folha basta apenas reajustar 
         // o ponteiro do pai após fazer a troca de chave
         if (!ehFolha(pred)) 
             pred->pai->esquerda = pred->esquerda; // predecessor nunca terá um filho direito
@@ -369,6 +371,7 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** removido_ptr) {
         }
         trocarChave(atual, pred);
         free(pred);
+        *substituto = atual;
         return true;
 
     } else if (atual->direita != NULL){
@@ -377,6 +380,7 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** removido_ptr) {
         atual->direita = aux->direita;
         atual->esquerda = aux->esquerda;
         free(aux);
+        *substituto = atual;
         return true; 
 
     } 
