@@ -12,17 +12,11 @@ cor_t corDoNO(NO *node) {
 }
 
 
-// Dado um nó, realiza a mudança de cor dele e de seus filhos.
-// Caso seja Preto altera para vermelho,
-// caso seja vermelho altera para preto
+// Dado um nó, realiza a mudança de sua cor 
 static bool trocaCor(NO *node) {
     if (node == NULL)
         return false;
     node->cor = !node->cor;
-    if (node->esquerda != NULL)
-        node->esquerda->cor = !node->esquerda->cor;
-    if (node->direita != NULL)
-        node->direita->cor = !node->direita->cor;
     return true;
 }
 
