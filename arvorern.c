@@ -140,13 +140,12 @@ static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
     if (pivo->pai == NULL)
         arvore->raiz = aux;
     else if (ehFilhoEsquerdo(pivo))
-        pivo->pai->direita = aux;
-    else
         pivo->pai->esquerda = aux;
+    else
+        pivo->pai->direita = aux;
 
     aux->direita = pivo;
     pivo->pai = aux;
-
 }
 
 
