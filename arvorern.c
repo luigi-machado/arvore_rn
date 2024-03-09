@@ -97,7 +97,7 @@ NO* encontraTio(NO* node) {
 }
 
 
-// Deus por favor me explica o que ta acontecendo aqui
+// SOCORRO
 static void rotacaoDireita(arvore_rn *arvore, NO *pivo) {
     NO *aux = pivo->esquerda;
     pivo->esquerda = aux->direita;
@@ -110,7 +110,7 @@ static void rotacaoDireita(arvore_rn *arvore, NO *pivo) {
     // Se o pivo for raiz atualiza a raiz para seu filho esquerdo
     if (pivo->pai == NULL)
         arvore->raiz = aux;
-    else if (ehFilhoDireito(pivo))
+    else if (ehFilhoEsquerdo(pivo))
         pivo->pai->esquerda = aux;
     else
         pivo->pai->direita = aux;
@@ -377,10 +377,6 @@ static void imprime_nivel(NO* raiz, int nivel) {
 void imprimePorNivel(arvore_rn *arvore) {
     int h = altura(arvore->raiz);
     for (int i = 1; i <= h; i++) {
-        /*int n = (h - i);
-        for (int j = 0; j < n; j++) {
-            printf(" ");
-        }*/
         imprime_nivel(arvore->raiz, i);
         printf("\n");
     }
