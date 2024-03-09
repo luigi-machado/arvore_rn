@@ -62,6 +62,15 @@ NO* sucessorImediato(NO* node) {
 }
 
 
+NO* predecessorImediato(NO* node) {
+    NO* aux = node->esquerda;
+    while (aux->direita != NULL) {
+        aux = aux->direita;
+    }
+    return aux;
+}
+
+
 void inicializar(arvore_rn *arvore) {
     arvore->raiz = NULL;
 }
@@ -94,6 +103,14 @@ NO* encontraTio(NO* node) {
     else
         tio = avo->direita;
     return tio;
+}
+
+
+NO* encontrarIrmao(NO* node) {
+    if (ehFilhoDireito(node))
+        return node->pai->esquerda; 
+    else
+        return node->pai->direita;
 }
 
 
@@ -145,7 +162,7 @@ static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
 
 static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
     // Se o pai do novo nó for preto a arvore já está balanceada
-    while (corDoNO(novoNO) == VERMELHO && /*novoNO->pai != NULL &&*/ corDoNO(novoNO->pai) == VERMELHO) {
+    while (corDoNO(novoNO) == VERMELHO && corDoNO(novoNO->pai) == VERMELHO) {
         printf("bal\n");
         NO* pai = novoNO->pai;
         NO* avo = pai->pai;
@@ -199,7 +216,6 @@ static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
     
     }
     arvore->raiz->cor = PRETO;
-    return;
 }
 
 
