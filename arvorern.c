@@ -387,6 +387,29 @@ bool remover(arvore_rn *arvore, item_t chave) {
 }
 
 
+bool vazia(NO* node) {
+    if (node == NULL || node->esquerda == NULL && node->direita == NULL)
+        return true;
+    return false;
+}
+
+
+static void destruir_base(NO* node) {
+    if (!vazia(node)) {
+        destruir_base(node->esquerda);
+        destruir_base(node->direita);
+        free(node);
+    }
+
+}
+
+
+void destruir(arvore_rn *arvore) {
+    destruir_base(arvore->raiz);
+    arvore->raiz = NULL;
+}
+
+
 // Realiza navegação inOrder, exibindo todos os elementos da arvore.
 // Função base para a inorder 
 static void inorder_base(NO *raiz) {
@@ -433,6 +456,10 @@ static void imprime_nivel(NO* raiz, int nivel) {
 }
 
 void imprimePorNivel(arvore_rn *arvore) {
+    if (vazia(arvore->raiz)) {
+        printf("VAZIA\n");
+        return;
+    }
     int h = altura(arvore->raiz);
     for (int i = 1; i <= h; i++) {
         imprime_nivel(arvore->raiz, i);

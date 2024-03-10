@@ -44,6 +44,8 @@ bool inserir(arvore_rn *arvore, item_t chave);
 // Retorna true caso remova e false se o nó não for encontrado
 bool remover(arvore_rn *arvore, item_t chave);
 
+void destruir(arvore_rn *arvore);
+
 // Realiza navegação inOrder, exibindo todos os elementos da arvore 
 void inorder(arvore_rn *arvore);
 
