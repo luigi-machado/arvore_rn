@@ -327,7 +327,8 @@ static void trocarChave(NO *atual, NO *novo) {
 
 
 // Funcao padrao de remocao da arvore binaria.
-static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto) {
+// Dá preferencia ao Predecessor
+static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto, cor_t *cor_remov) {
     NO* atual = encontrarNO(arvore, chave);
     if (atual == NULL) // Retorna false se a chave não for encontrada
         return false;
@@ -342,6 +343,7 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto) {
         else
             pai->esquerda = NULL;
         
+        *cor_remov = atual->cor;
         free(atual);
         *substituto = NULL; 
         return true;
@@ -360,6 +362,7 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto) {
             }
         }
         trocarChave(atual, pred);
+        *cor_remov = pred->cor;
         free(pred);
         *substituto = atual;
         return true;
@@ -369,6 +372,7 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto) {
         trocarChave(atual, aux);
         atual->direita = aux->direita;
         atual->esquerda = aux->esquerda;
+        *cor_remov = aux->cor;
         free(aux);
         *substituto = atual;
         return true; 
@@ -380,8 +384,11 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto) {
 
 
 bool remover(arvore_rn *arvore, item_t chave) {
-    if (remover_abb(arvore, chave)) {
-        balancearRemocao(arvore);
+    NO* substituto;
+    cor_t cor_removido;
+    if (remover_abb(arvore, chave, &substituto, &cor_removido)) {
+        if (cor_removido == PRETO)
+            balancearRemocao(arvore, substituto);
         return true;
     }
     return false;
