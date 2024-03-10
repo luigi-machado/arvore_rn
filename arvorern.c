@@ -394,7 +394,7 @@ bool remover(arvore_rn *arvore, item_t chave) {
 
 
 bool vazia(NO* node) {
-    if (node == NULL || node->esquerda == NULL && node->direita == NULL)
+    if (node == NULL)
         return true;
     return false;
 }
