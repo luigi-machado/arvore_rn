@@ -106,6 +106,7 @@ NO* encontraTio(NO* node) {
 }
 
 
+// Retorna um apontador para o irmão do nó passado
 NO* encontrarIrmao(NO* node) {
     if (ehFilhoDireito(node))
         return node->pai->esquerda; 
@@ -302,6 +303,9 @@ static bool inserir_abb(arvore_rn *arvore, item_t chave, NO** novoNO_ptr) {
 }
 
 
+// Realiza a inserção de um nó na arvore, ajustando o balanceamento.
+// Caso haja alguma falha na inserção, retorna false.
+// Não permite duplicidade
 bool inserir(arvore_rn *arvore, item_t chave) {
     NO* novo;
     if (inserir_abb(arvore, chave, &novo)) {
@@ -374,7 +378,9 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto, cor_t 
 }
 
 
-
+// Tenta remover um item da arvore_rn usando sua chave.
+// Se conseguir remover verifica o balanceamento e retorna true.
+// Se o item não for encontrado retorna false.
 bool remover(arvore_rn *arvore, item_t chave) {
     NO* substituto;
     cor_t cor_removido;
@@ -394,6 +400,7 @@ bool vazia(NO* node) {
 }
 
 
+// Função base para desalocar toda a arvore
 static void destruir_base(NO* node) {
     if (!vazia(node)) {
         destruir_base(node->esquerda);
@@ -404,6 +411,7 @@ static void destruir_base(NO* node) {
 }
 
 
+// Desaloca todos os nós da arvore e ajusta o ponteiro da raiz.
 void destruir(arvore_rn *arvore) {
     destruir_base(arvore->raiz);
     arvore->raiz = NULL;
@@ -421,11 +429,13 @@ static void inorder_base(NO *raiz) {
 }
 
 
+// Realiza navegação inOrder, exibindo todos os elementos da arvore
 void inorder(arvore_rn *arvore) {
     inorder_base(arvore->raiz);
 }
 
 
+// Retorna a altura de uma sub-arvore
 static int altura(NO* node) {
     if (node == NULL)
         return 0;
@@ -438,6 +448,7 @@ static int altura(NO* node) {
     else
         return altura_esquerda + 1;;
 }
+
 
 static void imprime_nivel(NO* raiz, int nivel) {
     if (raiz == NULL)
@@ -455,6 +466,8 @@ static void imprime_nivel(NO* raiz, int nivel) {
     }
 }
 
+
+// Imprime os nós de cada nível da arvore
 void imprimePorNivel(arvore_rn *arvore) {
     if (vazia(arvore->raiz)) {
         printf("VAZIA\n");
