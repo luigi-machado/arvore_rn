@@ -219,21 +219,57 @@ static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
 }
 
 
-static void balancearRemocao(arvore_rn *arvore) {
-    return;
-}
-
-
-static NO* old_inserir_bin(NO* raiz, item_t chave) {
-    if (raiz == NULL)
-        return criarNo(chave, NULL);
-    if (chave > raiz->dados) {
-        raiz->direita = old_inserir_bin(raiz->direita, chave);
+static void balancearRemocao(arvore_rn *arvore, NO* node) {
+    while (node != arvore->raiz && corDoNO(node) == PRETO) {
+        NO* irmao = encontrarIrmao(node);
+        //NO* pai = node->pai;
+        if (ehFilhoEsquerdo(node)) { // Irmao é direito
+            if (corDoNO(irmao) == VERMELHO) {
+                irmao->cor = PRETO;
+                node->pai->cor = VERMELHO;
+                rotacaoEsquerda(arvore, node->pai);
+                irmao = encontrarIrmao(node);
+            } else if (corDoNO(irmao->direita) == PRETO && corDoNO(irmao->esquerda) == PRETO) {
+                irmao->cor = VERMELHO;
+                node = node->pai;
+            } else {
+                if (corDoNO(irmao->direita) == PRETO) {
+                    irmao->esquerda->cor = PRETO;
+                    irmao->cor = VERMELHO;
+                    rotacaoDireita(arvore, irmao);
+                    irmao = encontrarIrmao(node);
+                }
+                irmao->cor = irmao->pai->cor;
+                node->pai->cor = PRETO;
+                irmao->direita->cor = PRETO;
+                rotacaoEsquerda(arvore, node->pai);
+                node = arvore->raiz;
+            }
+        } else {
+            if (corDoNO(irmao) == VERMELHO) {
+                irmao->cor = PRETO;
+                node->pai->cor = VERMELHO;
+                rotacaoDireita(arvore, node->pai);
+                irmao = encontrarIrmao(node);
+            } else if (corDoNO(irmao->direita) == PRETO && corDoNO(irmao->esquerda) == PRETO) {
+                irmao->cor = VERMELHO;
+                node = node->pai;
+            } else {
+                if (corDoNO(irmao->esquerda) == PRETO) {
+                    irmao->direita->cor = PRETO;
+                    irmao->cor = VERMELHO;
+                    rotacaoEsquerda(arvore, irmao);
+                    irmao = encontrarIrmao(node);
+                }
+                irmao->cor = irmao->pai->cor;
+                node->pai->cor = PRETO;
+                irmao->esquerda->cor = PRETO;
+                rotacaoDireita(arvore, node->pai);
+                node = arvore->raiz;
+            }
+        }
     }
-    else if (chave < raiz->dados) {
-        raiz->esquerda = old_inserir_bin(raiz->esquerda, chave);
-    }
-    return raiz;
+    node->cor = PRETO;
 }
 
 
