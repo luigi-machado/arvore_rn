@@ -330,7 +330,7 @@ static void trocarChave(NO *atual, NO *novo) {
 }
 
 
-// Funcao padrao de remocao da arvore binaria.
+// Baseada na funcao padrao de remocao da arvore binaria.
 // Dá preferencia ao Predecessor
 bool remover(arvore_rn *arvore, item_t chave) {
     cor_t cor_remov;
@@ -354,7 +354,6 @@ bool remover(arvore_rn *arvore, item_t chave) {
         cor_remov = atual->cor;
         free(atual);
         substituto = NULL; 
-        //return true;
 
     } else if (atual->esquerda != NULL){
         NO* pred = predecessorImediato(atual);
@@ -374,7 +373,6 @@ bool remover(arvore_rn *arvore, item_t chave) {
         cor_remov = pred->cor;
         free(pred);
         substituto = atual;
-        //return true;
 
     } else if (atual->direita != NULL){
         NO* aux = atual->direita;
@@ -384,31 +382,15 @@ bool remover(arvore_rn *arvore, item_t chave) {
         cor_remov = aux->cor;
         free(aux);
         substituto = atual;
-        //return true; 
 
     }
-    if (cor_remov == PRETO)
+    if (cor_remov == PRETO) // Se o balanceamento foi ferido, refaz o balanceamento
         balancearRemocao(arvore, substituto, substituto_pai);
     return true;
 }
 
 
-// Tenta remover um item da arvore_rn usando sua chave.
-// Se conseguir remover verifica o balanceamento e retorna true.
-// Se o item não for encontrado retorna false.
-bool remover_old(arvore_rn *arvore, item_t chave) {
-    NO* substituto;
-    cor_t cor_removido;
-    if (remover(arvore, chave)) {
-        if (cor_removido == PRETO)
-            balancearRemocao(arvore, substituto, substituto);
-        return true;
-    }
-    return false;
-}
-
-
-bool vazia(NO* node) {
+bool vazio(NO* node) {
     if (node == NULL)
         return true;
     return false;
@@ -417,7 +399,7 @@ bool vazia(NO* node) {
 
 // Função base para desalocar toda a arvore
 static void destruir_base(NO* node) {
-    if (!vazia(node)) {
+    if (!vazio(node)) {
         destruir_base(node->esquerda);
         destruir_base(node->direita);
         free(node);
@@ -484,7 +466,7 @@ static void imprime_nivel(NO* raiz, int nivel) {
 
 // Imprime os nós de cada nível da arvore
 void imprimePorNivel(arvore_rn *arvore) {
-    if (vazia(arvore->raiz)) {
+    if (vazio(arvore->raiz)) {
         printf("VAZIA\n");
         return;
     }
