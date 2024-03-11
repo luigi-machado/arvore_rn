@@ -39,15 +39,15 @@ bool ehFolha(NO *node) {
 }
 
 
-static bool ehFilhoDireito(NO *node) {
-    if (node == node->pai->direita)
+static bool ehFilhoDireito(NO *node, NO* pai) {
+    if (node == pai->direita)
         return true;
     return false;
 }
 
 
-static bool ehFilhoEsquerdo(NO *node) {
-    if (node == node->pai->esquerda)
+static bool ehFilhoEsquerdo(NO *node, NO* pai) {
+    if (node == pai->esquerda)
         return true;
     return false;
 }
@@ -107,11 +107,11 @@ NO* encontraTio(NO* node) {
 
 
 // Retorna um apontador para o irmão do nó passado
-NO* encontrarIrmao(NO* node) {
-    if (ehFilhoDireito(node))
-        return node->pai->esquerda; 
+NO* encontrarIrmao(NO* node, NO* pai) {
+    if (ehFilhoDireito(node, pai))
+        return pai->esquerda; 
     else
-        return node->pai->direita;
+        return pai->direita;
 }
 
 
@@ -128,7 +128,7 @@ static void rotacaoDireita(arvore_rn *arvore, NO *pivo) {
     // Se o pivo for raiz atualiza a raiz para seu filho esquerdo
     if (pivo->pai == NULL)
         arvore->raiz = aux;
-    else if (ehFilhoEsquerdo(pivo))
+    else if (ehFilhoEsquerdo(pivo, pivo->pai))
         pivo->pai->esquerda = aux;
     else
         pivo->pai->direita = aux;
@@ -151,7 +151,7 @@ static void rotacaoEsquerda(arvore_rn *arvore, NO *pivo) {
     // Se o pivo for raiz atualiza a raiz para seu filho direito
     if (pivo->pai == NULL)
         arvore->raiz = aux;
-    else if (ehFilhoEsquerdo(pivo))
+    else if (ehFilhoEsquerdo(pivo, pivo->pai))
         pivo->pai->esquerda = aux;
     else
         pivo->pai->direita = aux;
@@ -168,7 +168,7 @@ static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
         NO* avo = pai->pai;
         NO* tio = encontraTio(novoNO);
         // Tio é filho direito
-        if (ehFilhoEsquerdo(pai)) {
+        if (ehFilhoEsquerdo(pai, avo)) {
             // Caso 1: o pai e o tio são vermelhos
             if (corDoNO(tio) == VERMELHO) {
                 avo->cor = VERMELHO; 
@@ -177,7 +177,7 @@ static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
                 novoNO = avo; // Segue a verificação subindo pelo avô
             // Caso 2: o pai é Vermelho e o tio é Negro. Com o pai sendo filho esquerdo
             } else {
-                if (ehFilhoDireito(novoNO)) { // Caso 2.  rotação dupla a Direita
+                if (ehFilhoDireito(novoNO, novoNO->pai)) { // Caso 2.  rotação dupla a Direita
                     rotacaoEsquerda(arvore, pai);
                     novoNO = pai;
                     pai = novoNO->pai; // Atualiza as referencias para o novo 'novoNo'
@@ -195,7 +195,7 @@ static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
                 tio->cor = PRETO;
                 novoNO = avo;
             } else {
-                if (ehFilhoEsquerdo(novoNO)) {
+                if (ehFilhoEsquerdo(novoNO, novoNO->pai)) {
                     rotacaoDireita(arvore, pai);
                     novoNO = pai;
                     pai = novoNO->pai; // atualiza as referencias para o novo 'novoNo'
@@ -212,52 +212,60 @@ static void balancearInsercao(arvore_rn *arvore, NO* novoNO) {
 }
 
 
-static void balancearRemocao(arvore_rn *arvore, NO* node) {
+static void balancearRemocao(arvore_rn *arvore, NO* node, NO* substituto_pai) {
+    NO* irmao;
     while (node != arvore->raiz && corDoNO(node) == PRETO) {
-        NO* irmao = encontrarIrmao(node);
+        if (node != NULL){
+            substituto_pai = node->pai;
+            irmao = encontrarIrmao(node, substituto_pai);
+        }
+        else {
+            irmao = encontrarIrmao(node, substituto_pai);
+        }
+
         //NO* pai = node->pai;
-        if (ehFilhoEsquerdo(node)) { // Irmao é direito
+        if (ehFilhoEsquerdo(node, substituto_pai)) { // Irmao é direito
             if (corDoNO(irmao) == VERMELHO) {
                 irmao->cor = PRETO;
-                node->pai->cor = VERMELHO;
-                rotacaoEsquerda(arvore, node->pai);
-                irmao = encontrarIrmao(node);
+                substituto_pai->cor = VERMELHO;
+                rotacaoEsquerda(arvore, substituto_pai);
+                irmao = encontrarIrmao(node, substituto_pai);
             } else if (corDoNO(irmao->direita) == PRETO && corDoNO(irmao->esquerda) == PRETO) {
                 irmao->cor = VERMELHO;
-                node = node->pai;
+                node = substituto_pai;
             } else {
                 if (corDoNO(irmao->direita) == PRETO) {
                     irmao->esquerda->cor = PRETO;
                     irmao->cor = VERMELHO;
                     rotacaoDireita(arvore, irmao);
-                    irmao = encontrarIrmao(node);
+                    irmao = encontrarIrmao(node, substituto_pai);
                 }
                 irmao->cor = irmao->pai->cor;
-                node->pai->cor = PRETO;
+                substituto_pai->cor = PRETO;
                 irmao->direita->cor = PRETO;
-                rotacaoEsquerda(arvore, node->pai);
+                rotacaoEsquerda(arvore, substituto_pai);
                 node = arvore->raiz;
             }
         } else {
             if (corDoNO(irmao) == VERMELHO) {
                 irmao->cor = PRETO;
-                node->pai->cor = VERMELHO;
-                rotacaoDireita(arvore, node->pai);
-                irmao = encontrarIrmao(node);
+                substituto_pai->cor = VERMELHO;
+                rotacaoDireita(arvore, substituto_pai);
+                irmao = encontrarIrmao(node, substituto_pai);
             } else if (corDoNO(irmao->direita) == PRETO && corDoNO(irmao->esquerda) == PRETO) {
                 irmao->cor = VERMELHO;
-                node = node->pai;
+                node = substituto_pai;
             } else {
                 if (corDoNO(irmao->esquerda) == PRETO) {
                     irmao->direita->cor = PRETO;
                     irmao->cor = VERMELHO;
                     rotacaoEsquerda(arvore, irmao);
-                    irmao = encontrarIrmao(node);
+                    irmao = encontrarIrmao(node, substituto_pai);
                 }
                 irmao->cor = irmao->pai->cor;
-                node->pai->cor = PRETO;
+                substituto_pai->cor = PRETO;
                 irmao->esquerda->cor = PRETO;
-                rotacaoDireita(arvore, node->pai);
+                rotacaoDireita(arvore, substituto_pai);
                 node = arvore->raiz;
             }
         }
@@ -324,7 +332,10 @@ static void trocarChave(NO *atual, NO *novo) {
 
 // Funcao padrao de remocao da arvore binaria.
 // Dá preferencia ao Predecessor
-static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto, cor_t *cor_remov) {
+bool remover(arvore_rn *arvore, item_t chave) {
+    cor_t cor_remov;
+    NO *substituto;
+    NO *substituto_pai = NULL;
     NO* atual = encontrarNO(arvore, chave);
     if (atual == NULL) // Retorna false se a chave não for encontrada
         return false;
@@ -332,6 +343,7 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto, cor_t 
     NO* pai = atual->pai;
 
     if (ehFolha(atual)) {
+        substituto_pai = pai;
         if (pai == NULL) 
             arvore->raiz = NULL;
         else if (atual->dados > pai->dados)
@@ -339,10 +351,10 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto, cor_t 
         else
             pai->esquerda = NULL;
         
-        *cor_remov = atual->cor;
+        cor_remov = atual->cor;
         free(atual);
-        *substituto = NULL; 
-        return true;
+        substituto = NULL; 
+        //return true;
 
     } else if (atual->esquerda != NULL){
         NO* pred = predecessorImediato(atual);
@@ -351,42 +363,45 @@ static bool remover_abb(arvore_rn *arvore, item_t chave, NO** substituto, cor_t 
         if (!ehFolha(pred)) 
             pred->pai->esquerda = pred->esquerda; // predecessor nunca terá um filho direito
         else { 
-            if (ehFilhoDireito(pred)) { // Se for uma folha remove-se a referencia do filho correspondente
+            if (ehFilhoDireito(pred, pred->pai)) { 
+                // Se for uma folha remove-se a referencia do filho correspondente
                 pred->pai->direita = NULL;
             } else {
                 pred->pai->esquerda = NULL;
             }
         }
         trocarChave(atual, pred);
-        *cor_remov = pred->cor;
+        cor_remov = pred->cor;
         free(pred);
-        *substituto = atual;
-        return true;
+        substituto = atual;
+        //return true;
 
     } else if (atual->direita != NULL){
         NO* aux = atual->direita;
         trocarChave(atual, aux);
         atual->direita = aux->direita;
         atual->esquerda = aux->esquerda;
-        *cor_remov = aux->cor;
+        cor_remov = aux->cor;
         free(aux);
-        *substituto = atual;
-        return true; 
+        substituto = atual;
+        //return true; 
 
-    } 
-    return false;
+    }
+    if (cor_remov == PRETO)
+        balancearRemocao(arvore, substituto, substituto_pai);
+    return true;
 }
 
 
 // Tenta remover um item da arvore_rn usando sua chave.
 // Se conseguir remover verifica o balanceamento e retorna true.
 // Se o item não for encontrado retorna false.
-bool remover(arvore_rn *arvore, item_t chave) {
+bool remover_old(arvore_rn *arvore, item_t chave) {
     NO* substituto;
     cor_t cor_removido;
-    if (remover_abb(arvore, chave, &substituto, &cor_removido)) {
+    if (remover(arvore, chave)) {
         if (cor_removido == PRETO)
-            balancearRemocao(arvore, substituto);
+            balancearRemocao(arvore, substituto, substituto);
         return true;
     }
     return false;
