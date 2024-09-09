@@ -1,43 +1,47 @@
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #ifndef ARVORE_RN
 #define ARVORE_RN
 
-typedef enum {VERMELHO, PRETO} cor_t;
+typedef enum { VERMELHO, PRETO } cor_t;
 
-typedef int item_t ;
+typedef int item_t;
 
 typedef struct estrutura {
-    cor_t cor;
-    item_t dados;
-    struct estrutura *direita;
-    struct estrutura *esquerda;
-    struct estrutura *pai;
+  cor_t cor;
+  item_t dados;
+  struct estrutura *direita;
+  struct estrutura *esquerda;
+  struct estrutura *pai;
 } NO;
 
 typedef struct arvore_rn {
-    NO *raiz;
+  NO *raiz;
 } arvore_rn;
 
 // Retorna a cor do nó
-cor_t corDoNO(NO *node); 
+cor_t corDoNO(NO *node);
 
 // Retorna true se o nó não tiver nenhum filho, caso contrario retorna false.
-bool ehFolha(NO* node);
+bool ehFolha(NO *node);
 
-// Busca o menor nó a direita 
-NO* sucessorImediato(NO* node);
+// Busca o menor nó a direita
+NO *sucessorImediato(NO *node);
+
+// Busca o maior nó a esquerda
+NO *predecessorImediato(NO *node);
 
 // Deixa a arvore pronta para uso;
 void inicializar(arvore_rn *arvore);
 
 // Busca um nó na arvore e retorna um ponteiro para ele.
 // Caso não encontre retorna NULL
-NO* encontrarNO(arvore_rn *arvore, item_t chave);
+NO *encontrarNO(arvore_rn *arvore, item_t chave);
 
 // Insere o nó na arvore_rn e realiza o balanceamento.
-// Retorna false caso ocorra algum erro na inserção ou se o nó já estiver presente.
+// Retorna false caso ocorra algum erro na inserção ou se o nó já estiver
+// presente.
 bool inserir(arvore_rn *arvore, item_t chave);
 
 // Remove o nó da arvore_rn e realiza o balanceamento.
@@ -45,15 +49,15 @@ bool inserir(arvore_rn *arvore, item_t chave);
 bool remover(arvore_rn *arvore, item_t chave);
 
 // Diz se um nó é nulo
-bool vazio(NO* node);
+bool vazio(NO *node);
 
 // Desaloca todos os nós da arvore
 void destruir(arvore_rn *arvore);
 
-// Realiza navegação inOrder, exibindo todos os elementos da arvore 
+// Realiza navegação inOrder, exibindo todos os elementos da arvore
 void inorder(arvore_rn *arvore);
 
 // Imprime cada nível da arvore de forma separada
 void imprimePorNivel(arvore_rn *arvore);
 
-#endif // ARVORE_RN 
+#endif // ARVORE_RN
